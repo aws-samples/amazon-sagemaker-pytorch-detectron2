@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*checkpoints*
+*.pkl
+
+# Local config
+.DS_Store
+.vscode
+.idea
+.pylintrc
+.env
+ipython_config.py
+profile_default/
+
+# Notebook
+.ipynb_checkpoints
+
+# Data
+cache
