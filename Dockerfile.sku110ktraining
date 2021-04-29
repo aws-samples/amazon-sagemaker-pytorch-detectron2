@@ -13,7 +13,7 @@ RUN pip install --upgrade torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f https:/
 ############# Detectron2 section ##############
 RUN pip install \
    --no-cache-dir pycocotools~=2.0.0 \
-   --no-cache-dir detectron2 -f  https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.6/index.html
+   --no-cache-dir https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.6/detectron2-0.4%2Bcu101-cp36-cp36m-linux_x86_64.whl
 
 ENV FORCE_CUDA="1"
 # Build D2 only for Volta architecture - V100 chips (ml.p3 AWS instances)

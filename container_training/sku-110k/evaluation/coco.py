@@ -257,26 +257,29 @@ class D2CocoEvaluator(COCOEvaluator):
         )
         self._nb_max_preds = nb_max_preds
 
-    def _eval_predictions(self, tasks, predictions, img_ids=None):
+    def _eval_predictions(self, predictions, img_ids=None):
         """
         Evaluate predictions on the given tasks.
         Fill self._results with the metrics of the tasks.
         """
         self._logger.info("Preparing results for COCO format ...")
         coco_results = list(itertools.chain(*[x["instances"] for x in predictions]))
+        tasks = self._tasks or self._tasks_from_predictions(coco_results)
 
         # unmap the category ids for COCO
         if hasattr(self._metadata, "thing_dataset_id_to_contiguous_id"):
-            reverse_id_mapping = {
-                v: k
-                for k, v in self._metadata.thing_dataset_id_to_contiguous_id.items()
-            }
+            dataset_id_to_contiguous_id = self._metadata.thing_dataset_id_to_contiguous_id
+            all_contiguous_ids = list(dataset_id_to_contiguous_id.values())
+            num_classes = len(all_contiguous_ids)
+            assert min(all_contiguous_ids) == 0 and max(all_contiguous_ids) == num_classes - 1
+
+            reverse_id_mapping = {v: k for k, v in dataset_id_to_contiguous_id.items()}
             for result in coco_results:
                 category_id = result["category_id"]
-                assert (
-                    category_id in reverse_id_mapping
-                ), "A prediction has category_id={}, which is not available in the dataset.".format(
-                    category_id
+                assert category_id < num_classes, (
+                    f"A prediction has class={category_id}, "
+                    f"but the dataset only has {num_classes} classes and "
+                    f"predicted class id should be in [0, {num_classes - 1}]."
                 )
                 result["category_id"] = reverse_id_mapping[category_id]
 
@@ -297,6 +300,7 @@ class D2CocoEvaluator(COCOEvaluator):
             )
         )
         for task in sorted(tasks):
+            assert task in {"bbox", "segm", "keypoints"}, f"Got unknown task: {task}!"
             coco_eval = (
                 _evaluate_on_coco_impl(
                     self._coco_api,
