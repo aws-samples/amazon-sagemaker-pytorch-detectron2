@@ -1,0 +1,10 @@
+cache
+.git
+.DS_Store
+.vscode
+.idea
+.pylintrc
+.env
+ipython_config.py
+profile_default/
+.ipynb_checkpoints
