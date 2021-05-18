@@ -15,10 +15,25 @@ This repository shows how to do the following:
 
 ### Get Started
 
-Start by cloning this repository into your Amazon SageMaker notebook instance.
+Create a SageMaker notebook instance with an EBS volume equal or bigger than 30 GB and add the following lines to **start notebook** section of your life cycle configuration:
 
+```
+service docker stop
+sudo mv /var/lib/docker /home/ec2-user/SageMaker/docker
+sudo ln -s /home/ec2-user/SageMaker/docker /var/lib/docker
+service docker start
+```
+
+This ensures that docker builds images to a folder that is mounted on EBS. Once the instance is running, open Jupyter lab, launch a terminal and clone this repository:
+
+```
+cd SageMaker
+git clone https://github.com/aws-samples/amazon-sagemaker-pytorch-detectron2.git
+cd amazon-sagemaker-pytorch-detectron2
+```
 Open the [notebook](d2_custom_sku110k.ipynb). Follow the instruction in the notebook and use `conda_pytorch_p36` as kernel to execute code cells.
 
+You can also test the content in this repository on an EC2 that is running the [AWS Deep Learning AMI](https://docs.aws.amazon.com/dlami/latest/devguide/what-is-dlami.html).
 ### Instructions
 
 You will use a Detectron2 object detection model to recognize objects in densely packed scenes. You will use the SKU-110k dataset for this task. Be aware that the authors of the dataset provided it solely for academic and non-commercial purposes. Please refer to the following [paper](https://arxiv.org/abs/1904.00853) for further details on the dataset:
